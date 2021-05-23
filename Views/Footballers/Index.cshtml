@@ -1,0 +1,94 @@
+﻿@model PagedList.IPagedList<FifaStore.Models.Footballer>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+@{
+    ViewBag.Title = "Piłkarze";
+}
+
+<h2>Piłkarze</h2>
+
+@if (Context.User.IsInRole("Moderator"))
+{
+    <p>
+        @Html.ActionLink("Dodaj piłkarza", "Create")
+    </p>
+}
+
+@using (Html.BeginForm("Index", "Footballers", FormMethod.Get))
+{
+    <p>
+        Szukaj po frazie: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        @Html.DropDownList("NationSortParm", new SelectList(ViewBag.Nations, "ID", "Name"), "Narodowość")
+        @Html.DropDownList("LeagueSortParm", new SelectList(ViewBag.Leagues, "ID", "Name"), "Liga")
+        <input type="submit" value="Szukaj" />
+    </p>
+}
+<table class="table">
+    <tr>
+        <th>
+            Zdjęcie
+        </th>
+        <th>
+            @Html.ActionLink("Imię, nazwisko, alias", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter, leagueSortParm = ViewBag.LeagueSortParm, nationSortParm = ViewBag.NationSortParm })
+        </th>
+        <th>
+            Narodowość
+        </th>
+        <th>
+            Klub
+        </th>
+        @if (Context.User.IsInRole("Moderator"))
+        {
+            <th></th>
+        }
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a href="/Footballers/Details?id=@item.ID">
+                    <img src="~/Images/@item.Photo" alt="@item.Photo" height="50px" width="50px" />
+                </a>
+            </td>
+            <td>
+                @if (item.Alias != " ")
+                {
+                    @item.FirstName
+                    @:
+                    @item.LastName
+                }
+                else
+                {
+                    @item.FirstName
+                    @:
+                    @item.LastName
+                    @: "
+                    @item.Alias
+                    @:"
+                }
+            </td>
+            <td>
+                <img src="~/Images/@item.Nationality.Flag" alt="@item.Nationality.Flag" height="50px" width="72px" />
+            </td>
+            <td>
+                <img src="~/Images/@item.Club.ClubCrest" alt="@item.Club.ClubCrest" height="50px" width="50px" />
+            </td>
+            @if (Context.User.IsInRole("Moderator"))
+            {
+                <td>
+                    @Html.ActionLink("Edytuj", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Usuń", "Delete", new { id = item.ID })
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+<br />
+Strona @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) z @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

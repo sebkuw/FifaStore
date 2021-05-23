@@ -1,0 +1,30 @@
+﻿@model IEnumerable<FifaStore.ViewModels.LeagueClubGroup>
+
+@{
+    ViewBag.Title = "Statistics";
+}
+
+<h2>Statistics</h2>
+
+<table>
+    <tr>
+        <th>
+            League name
+        </th>
+        <th>
+            Number of clubs
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LeagueName)
+            </td>
+            <td>
+                @item.ClubCount
+            </td>
+        </tr>
+    }
+</table>

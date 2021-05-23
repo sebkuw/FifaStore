@@ -1,0 +1,67 @@
+﻿@model PagedList.IPagedList<FifaStore.Models.CardType>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Typy kart";
+}
+
+<h2>Typy kart</h2>
+
+@if (Context.User.IsInRole("Moderator"))
+{
+    <p>
+        @Html.ActionLink("Dodaj typ", "Create")
+    </p>
+}
+
+@using (Html.BeginForm("Index", "CardTypes", FormMethod.Get))
+{
+    <p>
+        Szukaj po frazie: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Szukaj" />
+    </p>
+}
+<table class="table">
+    <tr>
+        <th>
+            Ramka
+        </th>
+        <th>
+            @Html.ActionLink("Nazwa", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        @if (Context.User.IsInRole("Moderator"))
+        {
+            <th></th>
+        }
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a href="/Clubs/Details?id=@item.ID">
+                    <img src="~/Images/@item.CardBorder" alt="@item.CardBorder" height="50px" width="36px" />
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            @if (Context.User.IsInRole("Moderator"))
+            {
+                <td>
+                    @Html.ActionLink("Edytuj", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Usuń", "Delete", new { id = item.ID })
+                </td>
+            }
+        </tr>
+    }
+
+</table>
+
+<br />
+Strona @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) z @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+

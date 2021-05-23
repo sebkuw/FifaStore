@@ -1,0 +1,72 @@
+﻿@model PagedList.IPagedList<FifaStore.Models.League>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+	ViewBag.Title = "Ligi";
+}
+
+<h2>Ligi</h2>
+
+@if (Context.User.IsInRole("Moderator"))
+{
+	<p>
+		@Html.ActionLink("Dodaj ligę", "Create")
+	</p>
+}
+
+@using (Html.BeginForm("Index", "Leagues", FormMethod.Get))
+{
+	<p>
+		Szukaj po frazie: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+		<input type="submit" value="Szukaj" />
+	</p>
+}
+<table class="table">
+	<tr>
+		<th>
+			Herb ligi
+		</th>
+		<th>
+			@Html.ActionLink("Nazwa", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+		</th>
+		<th>
+			@Html.ActionLink("Skrót", "Index", new { sortOrder = ViewBag.ShortSortParm, currentFilter = ViewBag.CurrentFilter })
+		</th>
+		@if (Context.User.IsInRole("Moderator"))
+		{
+			<th></th>
+		}
+	</tr>
+
+	@foreach (var item in Model)
+	{
+		<tr>
+			<td>
+				<a href="/Leagues/Details?id=@item.ID">
+					<img src="~/Images/@item.LeagueCrest" alt="@item.LeagueCrest" height="50px" width="50px" />
+				</a>
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.Name)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.Short)
+			</td>
+
+			@if (Context.User.IsInRole("Moderator"))
+			{
+				<td>
+					@Html.ActionLink("Edytuj", "Edit", new { id = item.ID }) |
+					@Html.ActionLink("Usuń", "Delete", new { id = item.ID })
+				</td>
+			}
+		</tr>
+	}
+</table>
+
+<br />
+Strona @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) z @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+	new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

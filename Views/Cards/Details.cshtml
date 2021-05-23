@@ -1,0 +1,268 @@
+﻿@model FifaStore.Models.Card
+@using Newtonsoft.Json
+
+
+@{
+    ViewBag.Title = "Details";
+}
+<body onload="myCanvas()">
+    <canvas id="myCanvas" width="322px" height="450px"></canvas>
+</body>
+
+<script type="text/javascript">
+    var cardBorder = new Image();
+    var playerPhoto = new Image();
+
+    var nationFlag = new Image();
+    var clubCrest = new Image();
+    var overall = @Html.Raw(JsonConvert.SerializeObject(this.Model.Overall));
+    var position = @Html.Raw(JsonConvert.SerializeObject(this.Model.Position.ToString()));
+
+    var lastName = @Html.Raw(JsonConvert.SerializeObject(this.Model.Footballer.LastName.ToUpper()));
+    var pac = @Html.Raw(JsonConvert.SerializeObject(this.Model.Pace));
+    var sho = @Html.Raw(JsonConvert.SerializeObject(this.Model.Shooting));
+    var pas = @Html.Raw(JsonConvert.SerializeObject(this.Model.Passing));
+    var dri = @Html.Raw(JsonConvert.SerializeObject(this.Model.Dribbling));
+    var def = @Html.Raw(JsonConvert.SerializeObject(this.Model.Defending));
+    var phy = @Html.Raw(JsonConvert.SerializeObject(this.Model.Physicality));
+
+    cardBorder.src = "/Images/" + @Html.Raw(JsonConvert.SerializeObject(this.Model.CardType.CardBorder));
+    nationFlag.src = "/Images/" + @Html.Raw(JsonConvert.SerializeObject(this.Model.Footballer.Nationality.Flag));
+    clubCrest.src = "/Images/" + @Html.Raw(JsonConvert.SerializeObject(this.Model.Footballer.Club.ClubCrest));
+    playerPhoto.src = "/Images/" + @Html.Raw(JsonConvert.SerializeObject(this.Model.Footballer.Photo));
+
+    function myCanvas() {
+
+        var ctx = document.getElementById('myCanvas').getContext('2d');
+
+        //from base
+        ctx.drawImage(cardBorder, 0, 0, 322, 450);
+        ctx.drawImage(nationFlag, 70, 137, 42, 26);
+        ctx.drawImage(clubCrest, 71, 177, 40, 40);
+        ctx.drawImage(playerPhoto, 80, 35, 200, 200);
+
+        //left panel
+        ctx.textAlign = "center";
+        ctx.font = "500 50px Arial";
+        ctx.fillText(overall, 90, 100, 40);
+        ctx.font = "lighter 25px Arial";
+        ctx.fillText(position, 90, 125);
+
+        //line under position
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(76, 130);
+        ctx.lineTo(106, 130);
+        ctx.stroke();
+
+        //line under flag
+        ctx.beginPath();
+        ctx.moveTo(76, 170);
+        ctx.lineTo(106, 170);
+        ctx.stroke();
+
+        //bottom panel
+        //line under name
+        ctx.beginPath();
+        ctx.moveTo(70, 277);
+        ctx.lineTo(252, 277);
+        ctx.stroke();
+
+        //vertical line
+        ctx.beginPath();
+        ctx.moveTo(150, 373);
+        ctx.lineTo(172, 373);
+        ctx.stroke();
+
+        //bottom line
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(161, 290);
+        ctx.lineTo(161, 362);
+        ctx.stroke();
+
+        //name
+        ctx.font = "600 33px Arial";
+        ctx.fillText(lastName, 161, 268, 180);
+
+        ctx.font = "600 26px Arial";
+        //left skills
+        ctx.fillText(pac, 90, 305, 20);
+        ctx.fillText(sho, 90, 330, 20);
+        ctx.fillText(pas, 90, 355, 20);
+
+        //right skills
+        ctx.fillText(dri, 200, 305, 20);
+        ctx.fillText(def, 200, 330, 20);
+        ctx.fillText(phy, 200, 355, 20);
+
+        ctx.font = "200 26px Arial";
+        //left atr
+        ctx.fillText("PAC", 120, 305, 30);
+        ctx.fillText("SHO", 120, 330, 30);
+        ctx.fillText("PAS", 120, 355, 30);
+
+        //right atr
+        ctx.fillText("DRI", 230, 305, 30);
+        ctx.fillText("DEF", 230, 330, 30);
+        ctx.fillText("PHY", 230, 355, 30);
+    }
+</script>
+
+
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Zawodnik
+        </dt>
+
+        <dd>
+            @if (Model.Footballer.Alias != " ")
+            {
+                @Model.Footballer.FirstName
+                @:
+                @Model.Footballer.LastName
+            }
+            else
+            {
+                @Model.Footballer.FirstName
+                @:
+                @Model.Footballer.LastName
+                @: "
+                @Model.Footballer.Alias
+                @:"
+            }
+        </dd>
+
+        <dt>
+            Średnia cena
+        </dt>
+
+        <dd>
+            @Model.AvaragePrice
+            @if (User.Identity.IsAuthenticated)
+            {
+                using (Html.BeginForm("AddPrice", "Cards"))
+                {
+                    <input type="hidden" id="id" name="id" value="@Model.ID" />
+                    <input type="number" id="tbPrice" name="tbPrice" value="600" min="1" />
+                    <input type="submit" id="addPrice" value="Dodaj cenę zakupu" />
+                }
+            }
+        </dd>
+
+        <dt>
+            Ocena graczy
+        </dt>
+
+        <dd>
+            @Model.AvarageRate
+        </dd>
+        <dd>
+            @if (User.Identity.IsAuthenticated)
+            {
+                using (Html.BeginForm("AddRate", "Cards"))
+                {
+                    <input type="hidden" id="id" name="id" value="@Model.ID" />
+                    <input type="number" id="tbRate" name="tbRate" value="5" min="1" max="5" />
+                    <input type="submit" id="addRate" value="Dodaj ocenę" />
+                }
+            }
+
+        </dd>
+
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <dt>Posiadane</dt>
+            <dd>
+                @if (!(bool)ViewBag.IsOwned)
+                {
+                    using (Html.BeginForm("AddToOwned", "Cards"))
+                    {
+                        <input type="hidden" id="id" name="id" value="@Model.ID" />
+                        <input type="submit" id="addToOwned" value="Dodaj kartę do posiadanych" />
+                    }
+
+                }
+                else
+                {
+                    @:Posiadane
+                }
+            </dd>
+        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <dt>Ulubiona</dt>
+            <dd>
+                @if (!(bool)ViewBag.IsLiked)
+                {
+                    using (Html.BeginForm("AddToLiked", "Cards"))
+                    {
+                        <input type="hidden" id="id" name="id" value="@Model.ID" />
+                        <input type="submit" id="addToLiked" value="Dodaj do ulubionych" />
+                    }
+                }
+                else
+                {
+                    @:Ulubiona
+                }
+            </dd>
+
+        }
+
+    </dl>
+</div>
+<div>
+    @if (!(bool)ViewBag.IsComment)
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            @: Bądź pierwszy i napisz co myślisz o tej karcie.
+
+            using (Html.BeginForm("AddOpinion", "Cards"))
+            {
+                <input type="hidden" id="id" name="id" value="@Model.ID" />
+                <textarea id="opinion" name="opinion" rows="4" cols="50" placeholder="Twój komentarz..."></textarea>
+                <input type="submit" id="addOpinion" value="Dodaj komentarz" />
+            }
+        }
+    }
+    else
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            using (Html.BeginForm("AddOpinion", "Cards"))
+            {
+                <input type="hidden" id="id" name="id" value="@Model.ID" />
+                <textarea id="opinion" name="opinion" rows="4" cols="50" placeholder="Twój komentarz..."></textarea>
+                <input type="submit" id="addOpinion" value="Dodaj komentarz" />
+            }
+        }
+        <dl>
+            @foreach (var item in ViewBag.Comments)
+            {
+                <dt>
+                    @if (item.Profile.Avatar != null)
+                    {
+                        <img src="~/Images/@item.Profile.Avatar" width="40px" height="40px" />
+                    }
+                    @item.Profile.Username
+                    @item.Time
+                </dt>
+                <dd>@item.Message</dd>
+            }
+        </dl>
+    }
+</div>
+<p>
+    @if (Context.User.IsInRole("Moderator"))
+    {
+        @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID })
+        @:|
+    }
+    @Html.ActionLink("Powrót do listy", "Index")
+</p>

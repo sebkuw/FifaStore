@@ -1,0 +1,36 @@
+﻿@model FifaStore.Models.Profile
+
+@{
+    ViewBag.Title = "Details";
+}
+
+@if (Model.Avatar == null)
+{
+    @Html.ActionLink("Dodaj avatar", "Edit", new { id = Model.ID })
+}
+@if (Model.Avatar != null)
+{
+    <img src="~/Images/@Model.Avatar" alt="@Model.Avatar" height="200px" width="200px" />
+    @Html.ActionLink("Zmień avatar", "Edit", new { id = Model.ID })
+}
+<div>
+    <h4>Profile</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Username)
+        </dd>
+
+        <dt>
+            Hasło
+        </dt>
+
+        <dd>
+            @Html.ActionLink("Zmień hasło", "ChangePassword", "Manage")
+        </dd>
+    </dl>
+</div>

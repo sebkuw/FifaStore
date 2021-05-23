@@ -1,0 +1,30 @@
+﻿@model FifaStore.Models.CardType
+
+@{
+    ViewBag.Title = "Typ - karty szczegóły";
+}
+
+<img src="~/Images/@Model.CardBorder" alt="@Model.CardBorder" height="150px" width="72px" />
+
+<div>
+    <h4>Typ karty</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @if (Context.User.IsInRole("Moderator"))
+    {
+        @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID })
+        @:|
+    }
+    @Html.ActionLink("Powrót do listy", "Index")
+</p>

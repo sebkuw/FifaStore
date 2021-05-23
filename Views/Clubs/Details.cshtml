@@ -1,0 +1,66 @@
+﻿@model FifaStore.Models.Club
+
+@{
+    ViewBag.Title = "Kluby - szczegóły";
+}
+
+<img src="~/Images/@Model.ClubCrest" alt="@Model.ClubCrest" height="150px" width="150px" />
+
+<div>
+    <h4>Klub</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.League.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.League.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Short)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Short)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Footballers)
+        </dt>
+
+        @foreach (var item in Model.Footballers)
+        {
+            <a href="/Footballers/Details?id=@item.ID">
+                <dd>
+                    @item.FirstName
+                    @item.LastName
+
+                    @if (item.Alias != "")
+                    {
+                        @: "
+                        @item.Alias
+                        @:"
+                    }
+                </dd>
+            </a>
+        }
+    </dl>
+</div>
+<p>
+    @if (Context.User.IsInRole("Moderator"))
+    {
+        @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID })
+        @:|
+    }
+    @Html.ActionLink("Powrót do listy", "Index")
+</p>

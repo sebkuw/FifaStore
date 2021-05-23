@@ -1,0 +1,61 @@
+﻿@model FifaStore.Models.Footballer
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<img src="~/Images/@Model.Photo" alt="@Model.Photo" height="150px" width="150px" />
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Alias)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Alias)
+        </dd>
+
+        <dt>
+            <img src="~/Images/@Model.Club.ClubCrest" alt="@Model.Club.ClubCrest" height="50px" width="50px" />
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Club.Name)
+        </dd>
+
+        <dt>
+            <img src="~/Images/@Model.Nationality.Flag" alt="@Model.Nationality.Flag" height="50px" width="72px" />
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nationality.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @if (Context.User.IsInRole("Moderator"))
+    {
+        @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID })
+        @:|
+    }
+    @Html.ActionLink("Powrót do listy", "Index")
+</p>

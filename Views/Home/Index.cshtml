@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "FifaStore";
+}
+
+<div class="jumbotron">
+    <h1>FifaStore</h1>
+    <p class="lead">FifaStore to strona dla fanów gry Fifa, tutaj znajdziecie dostępne w grze karty wraz z ich średnimi cenami, ocenami, czy komentarzami wstawianymi przez graczy.</p>
+</div>
+
+<p>
+    <li>@Html.ActionLink("Karty", "Index", "Cards")</li>
+    <li>@Html.ActionLink("Piłkarze", "Index", "Footballers")</li>
+    <li>@Html.ActionLink("Typy kart", "Index", "CardTypes")</li>
+    <li>@Html.ActionLink("Narodowości", "Index", "Nationalities")</li>
+    <li>@Html.ActionLink("Ligi", "Index", "Leagues")</li>
+    <li>@Html.ActionLink("Kluby", "Index", "Clubs")</li>
+</p>

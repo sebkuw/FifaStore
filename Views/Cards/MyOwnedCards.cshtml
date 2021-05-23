@@ -1,0 +1,97 @@
+﻿@model PagedList.IPagedList<FifaStore.Models.Card>
+@using PagedList.Mvc;
+@using Newtonsoft.Json
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Posiadane";
+}
+
+<h2>Posiadane karty</h2>
+
+@using (Html.BeginForm("MyOwnedCards", "Cards", FormMethod.Get))
+{
+    <p>
+        @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        @Html.DropDownList("NationSortParm", new SelectList(ViewBag.Nations, "ID", "Name"), "Narodowość")
+        @Html.DropDownList("LeagueSortParm", new SelectList(ViewBag.Leagues, "ID", "Name"), "Liga")
+        @Html.DropDownList("CardTypeSortParm", new SelectList(ViewBag.CardTypes, "ID", "Name"), "Typ karty")
+        @Html.DropDownList("PositionSortParm", new SelectList(ViewBag.Positions), "Pozycja")
+        @Html.TextBox("PriceMin", ViewBag.PriceMin as string)
+        @Html.TextBox("PriceMax", ViewBag.PriceMax as string)
+        <input type="submit" value="Szukaj" />
+    </p>
+}
+<table class="table">
+    <tr>
+        <th>
+            Karta
+        </th>
+        <th>
+            @Html.ActionLink("Imię, nazwisko, alias", "MyOwnedCards", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter, leagueSortParm = ViewBag.LeagueSortParm, nationSortParm = ViewBag.NationSortParm, cardTypeSortParm = ViewBag.CardTypeSortParm, priceMin = ViewBag.PriceMin, priceMax = ViewBag.PriceMax })
+        </th>
+        <th>
+            @Html.ActionLink("Overall", "MyOwnedCards", new { sortOrder = ViewBag.OverallSortParm, currentFilter = ViewBag.CurrentFilter, leagueSortParm = ViewBag.LeagueSortParm, nationSortParm = ViewBag.NationSortParm, cardTypeSortParm = ViewBag.CardTypeSortParm, priceMin = ViewBag.PriceMin, priceMax = ViewBag.PriceMax })
+        </th>
+        <th>
+            Pozycja
+        </th>
+        <th>
+            @Html.ActionLink("Średnia cena", "MyOwnedCards", new { sortOrder = ViewBag.AvaragePriceSortParm, currentFilter = ViewBag.CurrentFilter, leagueSortParm = ViewBag.LeagueSortParm, nationSortParm = ViewBag.NationSortParm, cardTypeSortParm = ViewBag.CardTypeSortParm, priceMin = ViewBag.PriceMin, priceMax = ViewBag.PriceMax })
+        </th>
+        <th>
+            @Html.ActionLink("Ocena", "MyOwnedCards", new { sortOrder = ViewBag.RateSortParm, currentFilter = ViewBag.CurrentFilter, leagueSortParm = ViewBag.LeagueSortParm, nationSortParm = ViewBag.NationSortParm, cardTypeSortParm = ViewBag.CardTypeSortParm, priceMin = ViewBag.PriceMin, priceMax = ViewBag.PriceMax })
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a href="/Cards/Details?id=@item.ID">
+                    <img src="~/Images/@item.CardType.CardBorder" alt="@item.CardType.CardBorder" height="50px" width="36px" />
+                    <img src="~/Images/@item.Footballer.Photo" alt="@item.Footballer.Photo" height="50px" width="50px" />
+                    <img src="~/Images/@item.Footballer.Nationality.Flag" alt="@item.Footballer.Nationality.Flag" height="50px" width="72px" />
+                    <img src="~/Images/@item.Footballer.Club.ClubCrest" alt="@item.Footballer.Club.ClubCrest" height="50px" width="50px" />
+                </a>
+            </td>
+            <td>
+                @if (item.Footballer.Alias != " ")
+                {
+                    @item.Footballer.FirstName
+                    @:
+                    @item.Footballer.LastName
+                }
+                else
+                {
+                    @item.Footballer.FirstName
+                    @:
+                    @item.Footballer.LastName
+                    @: "
+                    @item.Footballer.Alias
+                    @:"
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Overall)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Position)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AvaragePrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AvarageRate)
+            </td>
+        </tr>
+    }
+</table>
+
+<br />
+Strona @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) z @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("MyOwnedCards",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+

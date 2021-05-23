@@ -1,0 +1,56 @@
+﻿@model FifaStore.Models.Club
+
+@{
+    ViewBag.Title = "Kluby - usuwanie";
+}
+
+<h2>Usuń</h2>
+
+<h3>Czy na pewno chcesz usunąć następujący element?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.League.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.League.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Short)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Short)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ClubCrest)
+        </dt>
+
+        <dd>
+            <img src="~/Images/@Model.ClubCrest" alt="@Model.ClubCrest" height="50px" width="50px" />
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Usuń" class="btn btn-default" /> |
+            @Html.ActionLink("Powrót do listy", "Index")
+        </div>
+    }
+</div>
